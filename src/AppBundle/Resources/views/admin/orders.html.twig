@@ -21,6 +21,15 @@
   </div>
 </div>
 
+<iframe
+    src="{{ dashboard_iframe_url }}"
+    frameborder="0"
+    width="100%"
+    height="400"
+    allowtransparency
+    style="margin-bottom: 15px;"
+></iframe>
+
 <div class="text-right">
   <a class="btn btn-default" href="{{ path('admin_foodtech_dashboard', { date: 'now'|date('Y-m-d') }) }}">
     <i class="fa fa-th-large"></i> Dashboard
