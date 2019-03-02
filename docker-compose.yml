@@ -11,6 +11,7 @@ services:
       - '5432:5432'
     volumes:
       - 'pg_data:/var/lib/postgresql/data'
+      - './docker/postgres/docker-entrypoint-initdb.d/metabase.sh:/docker-entrypoint-initdb.d/metabase.sh'
 
   redis:
     restart: always
@@ -142,6 +143,23 @@ services:
       start --timeZone "Europe/Paris"
     environment:
       - PULL_SELENIUM_IMAGE=true
+
+  metabase:
+    image: metabase/metabase
+    ports:
+      - '3001:3000'
+    depends_on:
+      - postgres
+    links:
+      - postgres
+    environment:
+      - MB_DB_TYPE=postgres
+      - MB_DB_DBNAME=metabase
+      - MB_DB_PORT=5432
+      - MB_DB_USER=postgres
+      - MB_DB_PASS=
+      - MB_DB_HOST=postgres
+      - JAVA_TIMEZONE=Europe/Paris
 
 volumes:
   node_modules:
