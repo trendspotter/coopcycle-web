@@ -143,6 +143,80 @@ services:
     environment:
       - PULL_SELENIUM_IMAGE=true
 
+  redash:
+    image: redash/redash
+    depends_on:
+      - postgres
+      - redis
+    links:
+      - postgres
+      - redis
+    command: server
+    ports:
+      - '5001:5000'
+    environment:
+      # Create user & database
+      # docker-compose exec postgres psql -U postgres -c 'CREATE USER redash'
+      # docker-compose exec postgres psql -U postgres -c 'CREATE DATABASE redash'
+      # docker-compose exec postgres psql -U postgres -c 'GRANT ALL PRIVILEGES ON DATABASE redash TO redash'
+      # docker-compose run --rm redash create_db
+
+      # Limit the user to only some tables
+      # https://redash.io/help/user-guide/users/permissions-groups
+      # docker-compose exec postgres psql -U postgres -d coopcycle -c 'GRANT SELECT ON TABLE address TO redash'
+      # docker-compose exec postgres psql -U postgres -d coopcycle -c 'GRANT SELECT ON TABLE restaurant TO redash'
+      # docker-compose exec postgres psql -U postgres -d coopcycle -c 'GRANT SELECT ON TABLE sylius_order TO redash'
+
+      # https://www.postgresql.org/docs/10/libpq-connect.html#id-1.7.3.8.3.6
+      # postgresql://[user[:password]@][netloc][:port][,...][/dbname][?param1=value1&...]
+      REDASH_DATABASE_URL: "postgresql://redash@postgres/redash"
+      REDASH_REDIS_URL: "redis://redis:6379/2"
+
+  redash_scheduler:
+    image: redash/redash
+    depends_on:
+      - postgres
+      - redis
+    links:
+      - postgres
+      - redis
+    command: scheduler
+    environment:
+      QUEUES: "celery"
+      WORKERS_COUNT: 1
+      REDASH_DATABASE_URL: "postgresql://redash@postgres/redash"
+      REDASH_REDIS_URL: "redis://redis:6379/2"
+
+  redash_scheduler_worker:
+    image: redash/redash
+    depends_on:
+      - postgres
+      - redis
+    links:
+      - postgres
+      - redis
+    command: worker
+    environment:
+      QUEUES: "scheduled_queries,schemas"
+      WORKERS_COUNT: 1
+      REDASH_DATABASE_URL: "postgresql://redash@postgres/redash"
+      REDASH_REDIS_URL: "redis://redis:6379/2"
+
+  redash_adhoc_worker:
+    image: redash/redash
+    depends_on:
+      - postgres
+      - redis
+    links:
+      - postgres
+      - redis
+    command: worker
+    environment:
+      QUEUES: "queries"
+      WORKERS_COUNT: 2
+      REDASH_DATABASE_URL: "postgresql://redash@postgres/redash"
+      REDASH_REDIS_URL: "redis://redis:6379/2"
+
 volumes:
   node_modules:
   pg_data:
