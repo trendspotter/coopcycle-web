@@ -12,6 +12,7 @@ Encore
   .addEntry('js/delivery-form', './js/app/delivery/form.jsx')
   .addEntry('js/delivery-list', './js/app/delivery/list.jsx')
   .addEntry('js/delivery-pricing-rules', './js/app/delivery/pricing-rules.jsx')
+  .addEntry('js/legal', './js/app/legal/index.js')
   .addEntry('js/notifications', './js/app/notifications/index.js')
   .addEntry('js/foodtech-dashboard', './js/app/foodtech/dashboard/index.js')
   .addEntry('js/restaurant', './js/app/restaurant/index.js')

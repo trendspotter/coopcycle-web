@@ -1,0 +1,30 @@
+{% extends "@App/admin.html.twig" %}
+
+{#
+{% block styles %}
+  {{ encore_entry_link_tags('js/legal') }}
+{% endblock %}
+#}
+
+{% block breadcrumb %}
+<li>{% trans %}adminDashboard.legal.title{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+
+{{ form_start(form) }}
+  <div id="editor"></div>
+  <div class="hidden">
+    {{ form_widget(form.key) }}
+    {{ form_widget(form.markdown) }}
+  </div>
+  <div class="text-right">
+    <button type="submit" class="btn btn-primary">{{ 'basics.save'|trans }}</button>
+  </div>
+{{ form_end(form) }}
+
+{% endblock %}
+
+{% block scripts %}
+{{ encore_entry_script_tags('js/legal') }}
+{% endblock %}

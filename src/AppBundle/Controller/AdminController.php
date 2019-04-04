@@ -15,6 +15,7 @@ use AppBundle\Form\RegistrationType;
 use AppBundle\Form\RestaurantAdminType;
 use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\ApiUser;
+use AppBundle\Entity\Content;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Restaurant;
@@ -26,6 +27,7 @@ use AppBundle\Entity\Sylius\Order;
 use AppBundle\Exception\PreviousTaskNotCompletedException;
 use AppBundle\Form\ApiAppType;
 use AppBundle\Form\BannerType;
+use AppBundle\Form\ContentType;
 use AppBundle\Form\EmbedSettingsType;
 use AppBundle\Form\OrderType;
 use AppBundle\Form\PricingRuleSetType;
@@ -1198,6 +1200,52 @@ class AdminController extends Controller
         }
 
         return $this->render('@App/admin/api_app_form.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/admin/legal", name="admin_legal")
+     */
+    public function legalAction(Request $request)
+    {
+        $key = 'legal.terms_of_sales';
+
+        $content = $this->getDoctrine()
+            ->getRepository(Content::class)
+            ->findOneByKey($key);
+
+        if (!$content) {
+            $content = new Content();
+            $content->setKey($key);
+        }
+
+        $form = $this->createForm(ContentType::class, $content);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $content = $form->getData();
+
+            if (null === $content->getId()) {
+                $this->getDoctrine()
+                    ->getManagerForClass(Content::class)
+                    ->persist($content);
+            }
+
+            $this->getDoctrine()
+                ->getManagerForClass(Content::class)
+                ->flush();
+
+            $this->addFlash(
+                'notice',
+                $this->get('translator')->trans('global.changesSaved')
+            );
+
+            return $this->redirectToRoute('admin_legal');
+        }
+
+        return $this->render('@App/admin/legal.html.twig', [
             'form' => $form->createView(),
         ]);
     }
