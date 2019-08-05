@@ -269,7 +269,6 @@ class AdminController extends Controller
             'date' => $date,
             'orders_normalized' => $ordersNormalized,
             'routes' => $request->attributes->get('routes'),
-            'jwt' => $request->getSession()->get('_jwt'),
             'preparation_delay' => intval($preparationDelay),
         ]);
     }
