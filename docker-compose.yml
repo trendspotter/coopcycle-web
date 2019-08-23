@@ -69,7 +69,6 @@ services:
       - browserless
     environment:
       SYMFONY_ENV: dev
-      BEHAT_PARAMS: '{"extensions":{"Behat\\MinkExtension":{"base_url": "http://nginx_test:80"}}}'
       GOOGLE_API_KEY: ${GOOGLE_API_KEY}
       STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
@@ -88,18 +87,6 @@ services:
       - '80:80'
     volumes:
       - './docker/nginx/conf.d:/etc/nginx/conf.d:ro'
-      - './web:/srv/coopcycle/web:ro'
-      - './vendor:/srv/coopcycle/vendor:ro'
-
-  nginx_test:
-    image: 'nginx:1.11-alpine'
-    depends_on:
-      - php
-      - nodejs
-    ports:
-      - '9080:80'
-    volumes:
-      - './docker/nginx_test/conf.d:/etc/nginx/conf.d:ro'
       - './web:/srv/coopcycle/web:ro'
       - './vendor:/srv/coopcycle/vendor:ro'
 
